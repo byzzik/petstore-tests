@@ -2,8 +2,8 @@
 {
     public enum OrderStatus
     {
-        Placed,
-        Approved,
-        Delivered
+        placed,
+        approved,
+        delivered
     }
 }

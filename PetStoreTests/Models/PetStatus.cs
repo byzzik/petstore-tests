@@ -2,8 +2,8 @@
 {
     public enum PetStatus
     {
-        Available,
-        Pending,
-        Sold
+        available,
+        pending,
+        sold
     }
 }

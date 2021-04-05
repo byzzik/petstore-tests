@@ -11,13 +11,13 @@
         public bool Complete { get; set; }
 
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [JsonPropertyName("petId")]
-        public int PetId { get; set; }
+        public int? PetId { get; set; }
 
         [JsonPropertyName("quantity")]
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         [JsonPropertyName("shipDate")]
         public DateTime ShipDate { get; set; }
