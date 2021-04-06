@@ -11,11 +11,10 @@
 
         Task<Pet> AddPet(Pet newPet);
         Task<List<Pet>> GetPet(PetStatus status);
-        Task<List<Pet>> GetPet(int id);
-        Task<ApiResponse> UpdatePet(int id, string name, PetStatus status);
+        Task<List<Pet>> GetPet(ulong? id);
+        Task<ApiResponse> UpdatePet(ulong? id, string name, PetStatus status);
         Task<Pet> UpdatePet(Pet updatedPet);
-        Task<ApiResponse> UploadPetImage(int petId, string additionalMetaData, byte[] file);
-        Task<ApiResponse> DeletePet(int id);
+        Task<ApiResponse> DeletePet(ulong? id);
 
         #endregion
     }

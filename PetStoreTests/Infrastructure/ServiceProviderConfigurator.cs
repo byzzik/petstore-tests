@@ -20,7 +20,7 @@
 
             services.AddOptions().Configure<PetStoreClientConfiguration>(configuration.GetSection(nameof(PetStoreClientConfiguration)));
 
-            services.AddHttpClient<IPetStoreClient, PetStoreClient>();
+            services.AddSingleton<IPetStoreClient, PetStoreClient>();
 
             return services.BuildServiceProvider();
         }
