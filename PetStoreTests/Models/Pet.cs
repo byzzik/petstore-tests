@@ -1,28 +1,28 @@
 ﻿namespace PetStoreTests.Models
 {
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
 
     public class Pet
     {
         #region Properties
 
-        [JsonPropertyName("category")]
+        [JsonProperty("category")]
         public Category Category { get; set; }
 
-        [JsonPropertyName("id")]
+        [JsonProperty("id")]
         public ulong? Id { get; set; }
 
-        [JsonPropertyName("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonPropertyName("photoUrls")]
+        [JsonProperty("photoUrls")]
         public string[] PhotoUrls { get; set; }
 
-        [JsonPropertyName("status")]
+        [JsonProperty("status")]
         public PetStatus Status { get; set; }
 
-        [JsonPropertyName("tags")]
-        public string[] Tags { get; set; }
+        [JsonProperty("tags")]
+        public Tag[] Tags { get; set; }
 
         #endregion
     }

@@ -4,13 +4,19 @@
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Configuration;
 
+    using Infrastructure;
+
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
 
     using Models;
+
+    using Newtonsoft.Json;
 
     public class PetStoreClient : IPetStoreClient
     {
@@ -21,6 +27,8 @@
         private readonly string _baseUrl;
         private readonly HttpClient _client;
         private readonly PetStoreClientConfiguration _clientConfiguration;
+
+        private readonly IHttpClientFactory _clientFactory;
         private readonly string _petRoute;
         private readonly string _userName;
         private readonly string _userPassword;
@@ -31,6 +39,7 @@
 
         public PetStoreClient(IOptions<PetStoreClientConfiguration> configuration)
         {
+            _clientFactory = ServiceProviderConfigurator.CreateServiceProvider().GetRequiredService<IHttpClientFactory>();
             _clientConfiguration = configuration.Value;
             _baseUrl = _clientConfiguration.BaseUrl;
             _apiVersion = _clientConfiguration.ApiVersion;
@@ -39,10 +48,8 @@
             _userName = _clientConfiguration.UserName;
             _userPassword = _clientConfiguration.UserPassword;
 
-            _client = new HttpClient
-                      {
-                          BaseAddress = new Uri(_baseUrl)
-                      };
+            _client = _clientFactory.CreateClient();
+            _client.BaseAddress = new Uri(configuration.Value.BaseUrl);
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _client.DefaultRequestHeaders.Add("api_key", $"{_apiKey}");
@@ -54,25 +61,21 @@
 
         public async Task<Pet> AddPet(Pet newPet)
         {
-            HttpResponseMessage response = await _client.PostAsJsonAsync($"{_apiVersion}/{_petRoute}", newPet);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsAsync<Pet>();
+            var payload = new StringContent(JsonConvert.SerializeObject(newPet), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync($"{_apiVersion}/{_petRoute}", payload);
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<Pet>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
         public async Task<List<Pet>> GetPet(PetStatus status)
         {
             HttpResponseMessage response = await _client.GetAsync($"{_apiVersion}/{_petRoute}/findByStatus?status={status}");
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsAsync<List<Pet>>();
-            return null;
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<List<Pet>>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
         public async Task<List<Pet>> GetPet(ulong? id)
         {
             HttpResponseMessage response = await _client.GetAsync($"{_apiVersion}/{_petRoute}/{id}");
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsAsync<List<Pet>>();
-            return null;
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<List<Pet>>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
         public async Task<ApiResponse> UpdatePet(ulong? id, string name, PetStatus status)
@@ -84,25 +87,20 @@
                                                    name,
                                                    status
                                                });
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsAsync<ApiResponse>();
-            return null;
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<ApiResponse>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
         public async Task<Pet> UpdatePet(Pet updatedPet)
         {
-            HttpResponseMessage response = await _client.PutAsJsonAsync($"{_apiVersion}/{_petRoute}", updatedPet);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsAsync<Pet>();
-            return null;
+            var payload = new StringContent(JsonConvert.SerializeObject(updatedPet), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PutAsync($"{_apiVersion}/{_petRoute}", payload);
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<Pet>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
         public async Task<ApiResponse> DeletePet(ulong? id)
         {
             HttpResponseMessage response = await _client.DeleteAsync($"{_apiVersion}/{_petRoute}/{id}");
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsAsync<ApiResponse>();
-            return null;
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<ApiResponse>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
         #endregion

@@ -1,29 +1,30 @@
 ﻿namespace PetStoreTests.Models
 {
     using System;
-    using System.Text.Json.Serialization;
+
+    using Newtonsoft.Json;
 
     public class Order
     {
         #region Properties
 
-        [JsonPropertyName("complete")]
+        [JsonProperty("complete")]
         public bool Complete { get; set; }
 
-        [JsonPropertyName("id")]
+        [JsonProperty("id")]
         public ulong? Id { get; set; }
 
-        [JsonPropertyName("petId")]
+        [JsonProperty("petId")]
         public ulong? PetId { get; set; }
 
-        [JsonPropertyName("quantity")]
-        public ulong? Quantity { get; set; }
+        [JsonProperty("quantity")]
+        public long Quantity { get; set; }
 
-        [JsonPropertyName("shipDate")]
-        public DateTime ShipDate { get; set; }
+        [JsonProperty("shipDate")]
+        public DateTimeOffset ShipDate { get; set; }
 
-        [JsonPropertyName("status")]
-        public OrderStatus Status { get; set; }
+        [JsonProperty("status")]
+        public string Status { get; set; }
 
         #endregion
     }

@@ -1,18 +1,18 @@
 ﻿namespace PetStoreTests.Models
 {
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
 
     public class ApiResponse
     {
         #region Properties
 
-        [JsonPropertyName("code")]
-        public int? Code { get; set; }
+        [JsonProperty("code")]
+        public long Code { get; set; }
 
-        [JsonPropertyName("message")]
+        [JsonProperty("message")]
         public string Message { get; set; }
 
-        [JsonPropertyName("type")]
+        [JsonProperty("type")]
         public string Type { get; set; }
 
         #endregion

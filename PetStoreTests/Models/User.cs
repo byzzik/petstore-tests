@@ -1,34 +1,34 @@
 ﻿namespace PetStoreTests.Models
 {
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
 
     public class User
     {
         #region Properties
 
-        [JsonPropertyName("email")]
+        [JsonProperty("email")]
         public string Email { get; set; }
 
-        [JsonPropertyName("firstName")]
+        [JsonProperty("firstName")]
         public string FirstName { get; set; }
 
-        [JsonPropertyName("id")]
+        [JsonProperty("id")]
         public ulong? Id { get; set; }
 
-        [JsonPropertyName("lastName")]
+        [JsonProperty("lastName")]
         public string LastName { get; set; }
 
-        [JsonPropertyName("password")]
+        [JsonProperty("password")]
         public string Password { get; set; }
 
-        [JsonPropertyName("phone")]
+        [JsonProperty("phone")]
         public string Phone { get; set; }
 
-        [JsonPropertyName("username")]
-        public string UserName { get; set; }
+        [JsonProperty("username")]
+        public string Username { get; set; }
 
-        [JsonPropertyName("userStatus")]
-        public int UserStatus { get; set; }
+        [JsonProperty("userStatus")]
+        public ulong? UserStatus { get; set; }
 
         #endregion
     }

@@ -1,15 +1,15 @@
 ﻿namespace PetStoreTests.Models
 {
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
 
     public class Tag
     {
         #region Properties
 
-        [JsonPropertyName("id")]
+        [JsonProperty("id")]
         public ulong? Id { get; set; }
 
-        [JsonPropertyName("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         #endregion

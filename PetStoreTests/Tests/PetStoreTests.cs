@@ -1,7 +1,6 @@
 ﻿namespace PetStoreTests.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Client;
@@ -41,12 +40,23 @@
                                   {
                                       Pet = new Pet
                                             {
-                                                Name = "testpetname",
+                                                Id = 32423423423,
+                                                Name = "iwrestled",
                                                 Status = PetStatus.available,
                                                 Category = new Category()
                                                            {
-                                                               Name = "testcategoryname"
+                                                               Id = 999999999,
+                                                               Name = "abearonce"
+                                                           },
+                                                Tags = new[]
+                                                       {
+                                                           new Tag()
+                                                           {
+                                                               Id = 888888888,
+                                                               Name = "Test Tag"
                                                            }
+                                                       },
+                                                PhotoUrls = new string[] { "Test Photo URL" }
                                             }
                                   }
                               };
@@ -62,8 +72,7 @@
         {
             Pet actualPet = await _client.AddPet(testCase.Pet);
 
-            //actualPet.Name.Should().Be(testCase.Pet.Name);
-            //actualPet.Status.Should().Be(testCase.Pet.Status);
+            actualPet.Should().BeEquivalentTo(testCase.Pet, options => options.Excluding(o=> o.Id));
 
             await _client.DeletePet(actualPet.Id);
         }
