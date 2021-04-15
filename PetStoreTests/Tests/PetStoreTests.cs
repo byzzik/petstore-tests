@@ -15,13 +15,14 @@
 
     using Xunit;
 
-    public class PetStoreTests : IClassFixture<ServiceFixture>
+    public class PetStoreTests : IClassFixture<ServiceFixture>, IAsyncDisposable
     {
         #region Fields
 
         public static TheoryData<AddPetTestCase> AddPetTestCases;
 
         private readonly IPetStoreClient _client;
+        private ulong? createdPetId;
 
         #endregion
 
@@ -40,7 +41,6 @@
                                   {
                                       Pet = new Pet
                                             {
-                                                Id = 32423423423,
                                                 Name = "iwrestled",
                                                 Status = PetStatus.available,
                                                 Category = new Category()
@@ -74,7 +74,12 @@
 
             actualPet.Should().BeEquivalentTo(testCase.Pet, options => options.Excluding(o=> o.Id));
 
-            await _client.DeletePet(actualPet.Id);
+            createdPetId = actualPet.Id;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await _client.DeletePet(createdPetId);
         }
 
         #endregion
