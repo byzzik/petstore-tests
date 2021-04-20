@@ -57,7 +57,7 @@
                                                  Name = "Test Tag"
                                              }
                                          },
-                                  PhotoUrls = new string[] { "Test Photo URL" }
+                                  PhotoUrls = new[] { "Test Photo URL" }
                               };
             AddPetTestCases = new TheoryData<PetsTestCase>
                               {
@@ -98,7 +98,7 @@
                                                                        Name = "Test Tag"
                                                                    }
                                                                },
-                                                        PhotoUrls = new string[] { "Test Photo URL" }
+                                                        PhotoUrls = new[] { "Test Photo URL" }
                                                     }
                                           },
                                           new PetsTestCase()
@@ -120,7 +120,7 @@
                                                                        Name = "Test Tag"
                                                                    }
                                                                },
-                                                        PhotoUrls = new string[] { "Test Photo URL" }
+                                                        PhotoUrls = new[] { "Test Photo URL" }
                                                     }
                                           }
                                       };
@@ -146,7 +146,7 @@
                                                                          Name = "Updated test Tag"
                                                                      }
                                                                  },
-                                                          PhotoUrls = new string[] { "Updated test Photo URL" }
+                                                          PhotoUrls = new[] { "Updated test Photo URL" }
                                                       }
                                      }
                                  };
@@ -232,11 +232,20 @@
         }
 
         [Fact]
-        public async Task UpdateNonExistedPetTest()
+        public async Task UpdateNonExistedPetFormTest()
         {
             ApiResponse updateResponse = await _client.UpdatePet(0, "Test Name", PetStatus.available);
             updateResponse.Code.Should().Be(404);
             updateResponse.Message.Should().Be("not found");
+        }
+
+        [Fact]
+        public async Task UpdateNonExistedPetTest()
+        {
+            Pet actualPet = await _client.UpdatePet(_defaultPetModel);
+            _createdPetId = actualPet.Id;
+
+            actualPet.Should().BeEquivalentTo(_defaultPetModel, options => options.Excluding(o=>o.Id));
         }
 
         public async ValueTask DisposeAsync()
