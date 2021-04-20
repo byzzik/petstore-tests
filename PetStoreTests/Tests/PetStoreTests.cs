@@ -19,7 +19,8 @@
     {
         #region Fields
 
-        public static TheoryData<AddPetTestCase> AddPetTestCases;
+        public static TheoryData<PetsTestCase> AddPetTestCases;
+        public static TheoryData<PetsTestCase> GetPetTestCases;
 
         private readonly IPetStoreClient _client;
         private ulong? createdPetId;
@@ -35,18 +36,43 @@
 
         static PetStoreTests()
         {
-            AddPetTestCases = new TheoryData<AddPetTestCase>
+            AddPetTestCases = new TheoryData<PetsTestCase>
                               {
-                                  new AddPetTestCase
+                                  new PetsTestCase
                                   {
                                       Pet = new Pet
                                             {
-                                                Name = "iwrestled",
+                                                Name = "Test pet name",
                                                 Status = PetStatus.available,
                                                 Category = new Category()
                                                            {
                                                                Id = 999999999,
-                                                               Name = "abearonce"
+                                                               Name = "Test categoty"
+                                                           },
+                                                Tags = new[]
+                                                       {
+                                                           new Tag()
+                                                           {
+                                                               Id = 888888888,
+                                                               Name = "Test Tag"
+                                                           }
+                                                       },
+                                                PhotoUrls = new string[] { "Test Photo URL" }
+                                            }
+                                  }
+                              };
+            GetPetTestCases = new TheoryData<PetsTestCase>
+                              {
+                                  new PetsTestCase
+                                  {
+                                      Pet = new Pet
+                                            {
+                                                Name = "Test pet name",
+                                                Status = PetStatus.available,
+                                                Category = new Category()
+                                                           {
+                                                               Id = 999999999,
+                                                               Name = "Test categoty"
                                                            },
                                                 Tags = new[]
                                                        {
@@ -68,7 +94,7 @@
 
         [Theory]
         [MemberData(nameof(AddPetTestCases))]
-        public async Task AddPetTests(AddPetTestCase testCase)
+        public async Task AddPetTest(PetsTestCase testCase)
         {
             Pet actualPet = await _client.AddPet(testCase.Pet);
 
@@ -76,6 +102,20 @@
 
             createdPetId = actualPet.Id;
         }
+
+        [Theory]
+        [MemberData(nameof(GetPetTestCases))]
+        public async Task GetPetTest(PetsTestCase testCase)
+        {
+            Pet testPet = await _client.AddPet(testCase.Pet);
+            Pet actualPet = await _client.GetPet(testPet.Id);
+
+            actualPet.Should().BeEquivalentTo(testCase.Pet, options => options.Excluding(o=>o.Id));
+            actualPet.Should().BeEquivalentTo(testPet);
+            createdPetId = testPet.Id;
+        }
+
+
 
         public async ValueTask DisposeAsync()
         {

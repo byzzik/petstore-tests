@@ -2,7 +2,7 @@
 {
     using Models;
 
-    public class AddPetTestCase
+    public class PetsTestCase
     {
         #region Properties
         

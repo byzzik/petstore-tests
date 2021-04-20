@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -72,10 +73,12 @@
             return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<List<Pet>>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
-        public async Task<List<Pet>> GetPet(ulong? id)
+        public async Task<Pet> GetPet(ulong? id)
         {
             HttpResponseMessage response = await _client.GetAsync($"{_apiVersion}/{_petRoute}/{id}");
-            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<List<Pet>>(response.Content.ReadAsStringAsync().Result) : null;
+            return response.IsSuccessStatusCode
+                       ? JsonConvert.DeserializeObject<Pet>(response.Content.ReadAsStringAsync().Result)
+                       : null;
         }
 
         public async Task<ApiResponse> UpdatePet(ulong? id, string name, PetStatus status)
