@@ -193,13 +193,12 @@
         public async Task GetPetByStatusTest(PetsTestCase testCase)
         {
             Pet testPet = await _client.AddPet(testCase.Pet);
+            _createdPetId = testPet.Id;
             List<Pet> petsList = await _client.GetPetByStatus(testCase.Pet.Status);
 
             petsList.Count.Should().BeGreaterThan(0);
             foreach (Pet pet in petsList)
                 pet.Status.Should().Be(testCase.Pet.Status);
-
-            _createdPetId = testPet.Id;
         }
 
         [Theory]
@@ -246,6 +245,20 @@
             _createdPetId = actualPet.Id;
 
             actualPet.Should().BeEquivalentTo(_defaultPetModel, options => options.Excluding(o=>o.Id));
+        }
+
+        [Fact]
+        public async Task DeletePetTest()
+        {
+            Pet actualPet = await _client.AddPet(_defaultPetModel);
+            _createdPetId = actualPet.Id;
+
+            ApiResponse deletePetResponse = await _client.DeletePet(actualPet.Id);
+
+            Pet deletedPet = await _client.GetPetById(actualPet.Id);
+
+            deletePetResponse.Code.Should().Be(200);
+            deletedPet.Should().BeNull();
         }
 
         public async ValueTask DisposeAsync()
