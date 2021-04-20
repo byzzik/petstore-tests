@@ -20,7 +20,7 @@
     {
         #region Fields
 
-        public static Pet DefaultPetModel;
+        public static readonly Pet _defaultPetModel;
         public static TheoryData<PetsTestCase> AddPetTestCases;
         public static TheoryData<PetsTestCase> GetPetByIdTestCases;
         public static TheoryData<PetsTestCase> GetPetByStatusTestCases;
@@ -40,7 +40,7 @@
 
         static PetStoreTests()
         {
-            DefaultPetModel = new Pet()
+            _defaultPetModel = new Pet()
                               {
                                   Name = "Test pet name",
                                   Status = PetStatus.available,
@@ -63,21 +63,21 @@
                               {
                                   new PetsTestCase
                                   {
-                                      Pet = DefaultPetModel
+                                      Pet = _defaultPetModel
                                   }
                               };
             GetPetByIdTestCases = new TheoryData<PetsTestCase>
                               {
                                   new PetsTestCase
                                   {
-                                      Pet = DefaultPetModel
+                                      Pet = _defaultPetModel
                                   }
                               };
             GetPetByStatusTestCases = new TheoryData<PetsTestCase>()
                                       {
                                           new PetsTestCase()
                                           {
-                                              Pet = DefaultPetModel
+                                              Pet = _defaultPetModel
                                           },
                                           new PetsTestCase()
                                           {
@@ -128,7 +128,7 @@
                                  {
                                      new PetsTestCase
                                      {
-                                         Pet = DefaultPetModel,
+                                         Pet = _defaultPetModel,
                                          UpdatedPet = new Pet
                                                       {
                                                           Name = "Updated test pet name",
@@ -180,6 +180,14 @@
             _createdPetId = testPet.Id;
         }
 
+        [Fact]
+        public async Task GetNonExistedPetByIdTest()
+        {
+            Pet actualPet = await _client.GetPetById(0);
+
+            actualPet.Should().BeNull();
+        }
+
         [Theory]
         [MemberData(nameof(GetPetByStatusTestCases))]
         public async Task GetPetByStatusTest(PetsTestCase testCase)
@@ -205,6 +213,30 @@
             updatedPet.Should().BeEquivalentTo(testCase.UpdatedPet);
 
             _createdPetId = testPet.Id;
+        }
+
+        [Fact]
+        public async Task UpdatePetFormTest()
+        {
+            const string UPDATED_NAME = "Updated name";
+            const PetStatus UPDATED_STATUS = PetStatus.sold;
+            Pet testPet = await _client.AddPet(_defaultPetModel);
+            _createdPetId = testPet.Id;
+
+            await _client.UpdatePet(testPet.Id, UPDATED_NAME, UPDATED_STATUS);
+
+            Pet actualPet = await _client.GetPetById(testPet.Id);
+
+            actualPet.Status.Should().Be(UPDATED_STATUS);
+            actualPet.Name.Should().Be(UPDATED_NAME);
+        }
+
+        [Fact]
+        public async Task UpdateNonExistedPetTest()
+        {
+            ApiResponse updateResponse = await _client.UpdatePet(0, "Test Name", PetStatus.available);
+            updateResponse.Code.Should().Be(404);
+            updateResponse.Message.Should().Be("not found");
         }
 
         public async ValueTask DisposeAsync()

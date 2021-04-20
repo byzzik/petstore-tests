@@ -79,14 +79,16 @@
 
         public async Task<ApiResponse> UpdatePet(ulong? id, string name, PetStatus status)
         {
-            HttpResponseMessage response = await _client.PostAsJsonAsync(
-                                               $"{_apiVersion}/{_petRoute}",
-                                               new
-                                               {
-                                                   name,
-                                                   status
-                                               });
-            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<ApiResponse>(response.Content.ReadAsStringAsync().Result) : null;
+            var formData = new List<KeyValuePair<string, string>>();
+            formData.Add(new KeyValuePair<string, string>("name", name));
+            formData.Add(new KeyValuePair<string, string>("status", status.ToString()));
+
+            var content = new FormUrlEncodedContent(formData);
+            content.Headers.Clear();
+            content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+            HttpResponseMessage response = await _client.PostAsync($"{_apiVersion}/{_petRoute}/{id}", content);
+            return JsonConvert.DeserializeObject<ApiResponse>(response.Content.ReadAsStringAsync().Result);
         }
 
         public async Task<Pet> UpdatePet(Pet updatedPet)
