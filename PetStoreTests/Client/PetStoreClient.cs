@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -23,13 +22,10 @@
     {
         #region Fields
 
-        private readonly string _apiKey;
         private readonly string _apiVersion;
-        private readonly string _baseUrl;
+        private string BaseUrl { get; }
         private readonly HttpClient _client;
-        private readonly PetStoreClientConfiguration _clientConfiguration;
 
-        private readonly IHttpClientFactory _clientFactory;
         private readonly string _petRoute;
         private readonly string _userName;
         private readonly string _userPassword;
@@ -40,20 +36,20 @@
 
         public PetStoreClient(IOptions<PetStoreClientConfiguration> configuration)
         {
-            _clientFactory = ServiceProviderConfigurator.CreateServiceProvider().GetRequiredService<IHttpClientFactory>();
-            _clientConfiguration = configuration.Value;
-            _baseUrl = _clientConfiguration.BaseUrl;
-            _apiVersion = _clientConfiguration.ApiVersion;
-            _petRoute = _clientConfiguration.PetRoute;
-            _apiKey = _clientConfiguration.ApiKey;
-            _userName = _clientConfiguration.UserName;
-            _userPassword = _clientConfiguration.UserPassword;
+            var clientFactory = ServiceProviderConfigurator.CreateServiceProvider().GetRequiredService<IHttpClientFactory>();
+            PetStoreClientConfiguration clientConfiguration = configuration.Value;
+            BaseUrl = clientConfiguration.BaseUrl;
+            _apiVersion = clientConfiguration.ApiVersion;
+            _petRoute = clientConfiguration.PetRoute;
+            string apiKey = clientConfiguration.ApiKey;
+            _userName = clientConfiguration.UserName;
+            _userPassword = clientConfiguration.UserPassword;
 
-            _client = _clientFactory.CreateClient();
-            _client.BaseAddress = new Uri(configuration.Value.BaseUrl);
+            _client = clientFactory.CreateClient();
+            _client.BaseAddress = new Uri(BaseUrl);
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _client.DefaultRequestHeaders.Add("api_key", $"{_apiKey}");
+            _client.DefaultRequestHeaders.Add("api_key", $"{apiKey}");
         }
 
         #endregion
@@ -67,13 +63,13 @@
             return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<Pet>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
-        public async Task<List<Pet>> GetPet(PetStatus status)
+        public async Task<List<Pet>> GetPetByStatus(PetStatus status)
         {
             HttpResponseMessage response = await _client.GetAsync($"{_apiVersion}/{_petRoute}/findByStatus?status={status}");
             return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<List<Pet>>(response.Content.ReadAsStringAsync().Result) : null;
         }
 
-        public async Task<Pet> GetPet(ulong? id)
+        public async Task<Pet> GetPetById(ulong? id)
         {
             HttpResponseMessage response = await _client.GetAsync($"{_apiVersion}/{_petRoute}/{id}");
             return response.IsSuccessStatusCode

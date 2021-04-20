@@ -7,6 +7,7 @@
         #region Properties
         
         public Pet Pet { get; set; }
+        public Pet UpdatedPet { get; set; }
 
         #endregion
     }
