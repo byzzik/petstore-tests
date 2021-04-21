@@ -16,11 +16,11 @@
 
     using Xunit;
 
-    public class PetStoreTests : IClassFixture<ServiceFixture>, IAsyncDisposable
+    public class PetsTests : IClassFixture<ServiceFixture>, IAsyncDisposable
     {
         #region Fields
 
-        public static readonly Pet _defaultPetModel;
+        private static readonly Pet _defaultPetModel;
         public static TheoryData<PetsTestCase> AddPetTestCases;
         public static TheoryData<PetsTestCase> GetPetByIdTestCases;
         public static TheoryData<PetsTestCase> GetPetByStatusTestCases;
@@ -33,12 +33,12 @@
 
         #region Constructors
 
-        public PetStoreTests(ServiceFixture fixture)
+        public PetsTests(ServiceFixture fixture)
         {
-            _client = fixture.PetStoreClient ?? throw new ArgumentNullException(nameof(PetStoreTests));
+            _client = fixture.PetStoreClient ?? throw new ArgumentNullException(nameof(PetStoreClient));
         }
 
-        static PetStoreTests()
+        static PetsTests()
         {
             _defaultPetModel = new Pet()
                               {

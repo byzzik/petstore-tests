@@ -24,7 +24,7 @@
         public DateTimeOffset ShipDate { get; set; }
 
         [JsonProperty("status")]
-        public string Status { get; set; }
+        public OrderStatus Status { get; set; }
 
         #endregion
     }

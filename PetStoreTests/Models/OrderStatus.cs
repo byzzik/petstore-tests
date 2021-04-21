@@ -4,6 +4,7 @@
     {
         placed,
         approved,
-        delivered
+        delivered,
+        Ok
     }
 }
