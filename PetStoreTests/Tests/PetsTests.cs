@@ -21,8 +21,6 @@
         #region Fields
 
         private static readonly Pet _defaultPetModel;
-        public static TheoryData<PetsTestCase> AddPetTestCases;
-        public static TheoryData<PetsTestCase> GetPetByIdTestCases;
         public static TheoryData<PetsTestCase> GetPetByStatusTestCases;
         public static TheoryData<PetsTestCase> UpdatePetTestCases;
 
@@ -58,20 +56,6 @@
                                              }
                                          },
                                   PhotoUrls = new[] { "Test Photo URL" }
-                              };
-            AddPetTestCases = new TheoryData<PetsTestCase>
-                              {
-                                  new PetsTestCase
-                                  {
-                                      Pet = _defaultPetModel
-                                  }
-                              };
-            GetPetByIdTestCases = new TheoryData<PetsTestCase>
-                              {
-                                  new PetsTestCase
-                                  {
-                                      Pet = _defaultPetModel
-                                  }
                               };
             GetPetByStatusTestCases = new TheoryData<PetsTestCase>()
                                       {
@@ -156,25 +140,23 @@
 
         #region Methods
 
-        [Theory]
-        [MemberData(nameof(AddPetTestCases))]
-        public async Task AddPetTest(PetsTestCase testCase)
+        [Fact]
+        public async Task AddPetTest()
         {
-            Pet actualPet = await _client.AddPet(testCase.Pet);
+            Pet actualPet = await _client.AddPet(_defaultPetModel);
 
-            actualPet.Should().BeEquivalentTo(testCase.Pet, options => options.Excluding(o=> o.Id));
+            actualPet.Should().BeEquivalentTo(_defaultPetModel, options => options.Excluding(o=> o.Id));
 
             _createdPetId = actualPet.Id;
         }
 
-        [Theory]
-        [MemberData(nameof(GetPetByIdTestCases))]
-        public async Task GetPetByIdTest(PetsTestCase testCase)
+        [Fact]
+        public async Task GetPetByIdTest()
         {
-            Pet testPet = await _client.AddPet(testCase.Pet);
+            Pet testPet = await _client.AddPet(_defaultPetModel);
             Pet actualPet = await _client.GetPetById(testPet.Id);
 
-            actualPet.Should().BeEquivalentTo(testCase.Pet, options => options.Excluding(o=>o.Id));
+            actualPet.Should().BeEquivalentTo(_defaultPetModel, options => options.Excluding(o=>o.Id));
             actualPet.Should().BeEquivalentTo(testPet);
 
             _createdPetId = testPet.Id;
