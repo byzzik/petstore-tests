@@ -18,7 +18,7 @@
         #region Fields
 
         private readonly IPetStoreClient _cliemt;
-        private ulong? _creaqtedPetId;
+        private ulong? _createdPetId;
         private ulong? _createdOrderId;
         private static readonly Order _defaultOrderModel;
         private static readonly Pet _defaultPetModel;
@@ -71,7 +71,7 @@
         public async Task AddOrderTest()
         {
             Pet testPet = await _cliemt.AddPet(_defaultPetModel);
-            _creaqtedPetId = testPet.Id;
+            _createdPetId = testPet.Id;
             _defaultOrderModel.PetId = testPet.Id;
 
             Order order = await _cliemt.AddOrder(_defaultOrderModel);
@@ -84,13 +84,15 @@
         [Fact]
         public async Task DeleteOrderTest()
         {
+            Pet testPet = await _cliemt.AddPet(_defaultPetModel);
+            _createdPetId = testPet.Id;
+            _defaultOrderModel.PetId = testPet.Id;
             Order order = await _cliemt.AddOrder(_defaultOrderModel);
-            _createdOrderId = order.Id;
 
             ApiResponse deleteOrderResponse = await _cliemt.DeleteOrder(order.Id);
             deleteOrderResponse.Code.Should().Be(200);
 
-            Order deletedOrder = await _cliemt.GetOrder(order.Id);
+            Order deletedOrder = await _cliemt.GetOrder(order.PetId);
 
             deletedOrder.Should().BeNull();
         }
@@ -128,7 +130,7 @@
         public async ValueTask DisposeAsync()
         {
             await _cliemt.DeleteOrder(_createdOrderId);
-            await _cliemt.DeletePet(_creaqtedPetId);
+            await _cliemt.DeletePet(_createdPetId);
         }
 
         #endregion
