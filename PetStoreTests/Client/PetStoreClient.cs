@@ -9,9 +9,6 @@
 
     using Configuration;
 
-    using Infrastructure;
-
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
 
     using Models;
@@ -42,9 +39,8 @@
 
         #region Constructors
 
-        public PetStoreClient(IOptions<PetStoreClientConfiguration> configuration)
+        public PetStoreClient(IOptions<PetStoreClientConfiguration> configuration, HttpClient client)
         {
-            var clientFactory = ServiceProviderConfigurator.CreateServiceProvider().GetRequiredService<IHttpClientFactory>();
             PetStoreClientConfiguration clientConfiguration = configuration.Value;
             BaseUrl = clientConfiguration.BaseUrl;
             _apiVersion = clientConfiguration.ApiVersion;
@@ -56,7 +52,7 @@
             _userName = clientConfiguration.UserName;
             _userPassword = clientConfiguration.UserPassword;
 
-            _client = clientFactory.CreateClient();
+            _client = client;
             _client.BaseAddress = new Uri(BaseUrl);
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
