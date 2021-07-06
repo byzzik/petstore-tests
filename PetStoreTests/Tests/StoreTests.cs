@@ -107,8 +107,9 @@
         [Fact]
         public async Task GetNonExistedOrderTest()
         {
-            await _cliemt.DeleteOrder(1);
-            Order order = await _cliemt.GetOrder(1);
+            const ulong TEST_PET_ID = ulong.MaxValue;
+            await _cliemt.DeleteOrder(TEST_PET_ID);
+            Order order = await _cliemt.GetOrder(TEST_PET_ID);
             order.Should().BeNull();
         }
 
