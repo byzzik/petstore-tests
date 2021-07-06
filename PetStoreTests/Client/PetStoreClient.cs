@@ -9,9 +9,6 @@
 
     using Configuration;
 
-    using Infrastructure;
-
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
 
     using Models;
