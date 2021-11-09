@@ -1,24 +1,21 @@
-﻿namespace PetStoreTests.Infrastructure
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using PetStoreTests.Client;
+using PetStoreTests.Configuration;
+
+namespace PetStoreTests.Infrastructure
 {
-    using System;
-
-    using Client;
-
-    using Configuration;
-
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-
     public class ServiceProviderConfigurator
     {
         #region Methods
 
         public static IServiceProvider CreateServiceProvider()
         {
-            IConfiguration configuration = ConfigurationFactory.CreateConfiguration();
+            var configuration = ConfigurationFactory.CreateConfiguration();
             var services = new ServiceCollection();
 
-            services.AddOptions().Configure<PetStoreClientConfiguration>(configuration.GetSection(nameof(PetStoreClientConfiguration)));
+            services.AddOptions()
+                .Configure<PetStoreClientConfiguration>(configuration.GetSection(nameof(PetStoreClientConfiguration)));
 
             services.AddHttpClient<IPetStoreClient, PetStoreClient>();
 

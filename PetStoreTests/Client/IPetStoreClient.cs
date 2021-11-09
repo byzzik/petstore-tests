@@ -1,10 +1,9 @@
-﻿namespace PetStoreTests.Client
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using PetStoreTests.Models;
+
+namespace PetStoreTests.Client
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-
-    using Models;
-
     public interface IPetStoreClient
     {
         #region Methods

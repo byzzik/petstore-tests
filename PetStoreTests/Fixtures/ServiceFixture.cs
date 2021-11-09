@@ -1,13 +1,10 @@
-﻿namespace PetStoreTests.Fixtures
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using PetStoreTests.Client;
+using PetStoreTests.Infrastructure;
+
+namespace PetStoreTests.Fixtures
 {
-    using System;
-
-    using Client;
-
-    using Infrastructure;
-
-    using Microsoft.Extensions.DependencyInjection;
-
     public class ServiceFixture
     {
         #region Fields
