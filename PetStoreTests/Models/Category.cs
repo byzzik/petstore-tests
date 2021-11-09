@@ -1,16 +1,14 @@
-﻿namespace PetStoreTests.Models
-{
-    using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
+namespace PetStoreTests.Models
+{
     public class Category
     {
         #region Properties
 
-        [JsonProperty("id")]
-        public long? Id { get; set; }
+        [JsonProperty("id")] public long? Id { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("name")] public string Name { get; set; }
 
         #endregion
     }
